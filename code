@@ -1,0 +1,35 @@
+import random
+from PIL import Image, ImageDraw, ImageFont
+import string
+
+def generate_captcha(text_length=6, image_width=200, image_height=100, font_size=40):
+    # Generate random text for CAPTCHA
+    captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=text_length))
+    
+    # Create blank image with white background
+    captcha_image = Image.new('RGB', (image_width, image_height), color = (255, 255, 255))
+    
+    # Load a font
+    font = ImageFont.truetype("arial.ttf", font_size)
+    
+    # Draw the text on the image
+    draw = ImageDraw.Draw(captcha_image)
+    text_width, text_height = draw.textsize(captcha_text, font=font)
+    text_x = (image_width - text_width) / 2
+    text_y = (image_height - text_height) / 2
+    draw.text((text_x, text_y), captcha_text, font=font, fill=(0, 0, 0))
+    
+    # Add some random noise (dots)
+    for _ in range(100):
+        x = random.randint(0, image_width)
+        y = random.randint(0, image_height)
+        draw.point((x, y), fill=(0, 0, 0))
+    
+    # Save the image as a file
+    captcha_image.save("captcha.png")
+    
+    return captcha_text
+
+# Example usage:
+captcha_text = generate_captcha()
+print("Generated CAPTCHA:", captcha_text)
